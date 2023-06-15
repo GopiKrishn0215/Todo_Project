@@ -7,7 +7,6 @@ from streamlit_option_menu import option_menu
 from streamlit_modal import Modal
 
 
-
 st.set_page_config(layout="wide",initial_sidebar_state="expanded",)
 
 local_host = 'http://localhost:8000/'
@@ -96,21 +95,18 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                     st.session_state['session_state'] = {'task': ''}
                 task = st.text_input("Tasks",key='task',value=st.session_state['session_state']['task'])
                 
-                if task:
-                    st.session_state['session_state']['task'] = task
+                if 'session_state' in st.session_state:
+                        st.session_state['session_state'] = {'task': task}
                 else:
-                    pass
+                    st.session_state['session_state'] = {'task': ''}
                     
                 add = st.button("ADD")    
                 
-
             boolean = True
             
             if task:
-                #add radio buttons here
                 if add:
-                    
-                    st.session_state['session_state']['task'] = ""
+                    st.session_state['session_state'] = {'task': ''}
                     url = local_host + "todo/?type=create"
                     headers = {'Authorization': f'Bearer {token}'}
                     params={
@@ -140,6 +136,7 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                     tasks = st.checkbox(task[i],key=task[i])
                     modal = Modal(key="key",title="update")
                     if tasks:
+                        # st.set_page_config(initial_sidebar_state="collapsed")
                         with modal.container():
                             with st.form(key="forms",clear_on_submit=True):
                                 description = st.text_area("Description")
