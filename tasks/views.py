@@ -17,15 +17,21 @@ def index(request):
     return HttpResponse("index")
 
 def history(request,userName):
-    data = ToDo.objects.filter(user_name=userName,status="Completed")
-    task = []
+    data = ToDo.objects.filter(user_name=userName, status="Completed")
+    tasks = []
+    files = []
+    description = []
+
     for item in data:
-        task.append(item.task)
-        
+        tasks.append(item.task)
+        files.append(item.file.path) 
+        description.append(item.description)
+
     response_data = {
-        "task" : task,
+        "tasks": tasks,
+        "files": files,
+        "description": description,
     }
-        
     return response_data
 
 
@@ -100,7 +106,7 @@ class Todo(APIView):
                 response = create_task(request,userName,task,discription,status)
             elif Type == "read":
                 response = read_task(request,userName)
-            return JsonResponse(response)
+            return JsonResponse(response,safe=False)
             
         except Exception as e:
             return Response({'error': str(e)})
@@ -112,11 +118,9 @@ class Todo(APIView):
             userName = self.request.GET.get('userName')
             task = self.request.GET.get('task')
             status = self.request.GET.get('status')
-            print(status)
             description = self.request.GET.get('description')
-            print(description)
             uploaded_file = self.request.FILES.get('file')
-            print(uploaded_file)
+
             
             if Type == "history":
                 response = history(request,userName)
@@ -126,7 +130,7 @@ class Todo(APIView):
                 response = read_task(request,userName)
             elif Type == "uploadfile":
                 response = upload_file(request,userName,task,description,status,uploaded_file)
-            return JsonResponse(response)
+            return JsonResponse(response,safe=False)
                 
         except Exception as e:
             return Response({'error': str(e)})
