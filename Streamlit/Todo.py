@@ -41,9 +41,6 @@ def get_data(token):
         return token
     else:
         return None
-    
-    
-
 
 
 if 'logged_in' not in st.session_state or not st.session_state['logged_in']:
@@ -79,19 +76,6 @@ if 'logged_in' not in st.session_state or not st.session_state['logged_in']:
     
 
 if 'logged_in' in st.session_state and st.session_state['logged_in']:
-    # st.markdown(
-    #      f"""
-    #      <style>
-    #      .stApp {{
-    #          background-image: url("https://www.odiaweb.in/wallpaper/wp-content/uploads/sites/16/2023/01/desktop-wallpaper......jpg");
-    #          background-attachment: fixed;
-    #          background-size: cover
-    #      }}
-    #      </style>
-    #      """,
-    #      unsafe_allow_html=True
-    #  )
-
     token = st.session_state['token']  
     UserName = st.session_state['username']
     col1,col2 = st.columns([8,2])
@@ -149,12 +133,11 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                 response = requests.get(url,headers=headers,params=params)
                 if response.status_code == 200:
                     data = response.json()
-                    task = data['task']
-                    modal = Modal(key="key",title="update")  
+                    task = data['task']  
                     for i in range(len(task)):
                         tasks = st.checkbox(task[i],key=task[i])
                         if tasks:
-                            with modal.container():
+                            with st.container():
                                 with st.form(key="forms",clear_on_submit=True):
                                     description = st.text_area("Description")
                                     file=st.file_uploader("please choose a file")
@@ -177,14 +160,11 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                                                 if response.status_code == 200:
                                                     st.success("WOW")
                                                 else:
-                                                    st.error("ERROR")
-                
-                
+                                                    st.error("ERROR")     
                 else:
                     st.error(f'Error: {response.status_code}')
                     
-            
-                
+                              
         if selected == "History":
             params={
                     "userName":UserName,
@@ -200,8 +180,6 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                 tasks = data['tasks']
                 files = data['files']
                 description = data['description']
-
-                # Display the data in Streamlit
                 st.header("Completed Tasks")
                 for i in range(len(tasks)):
                     details = st.button(f'{i+1}.{tasks[i]}')
@@ -224,22 +202,12 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                     # Display the CSS styles
                     st.markdown(button_style, unsafe_allow_html=True)
                     if details:
-                        st.write("Description:", description[i])
-                        file_path = files[i]
-                        try:
-                            with open(file_path, "r") as file:
-                                file_contents = file.read()
-                                st.write("File data:")
-                                st.code(file_contents)
-                        except FileNotFoundError:
-                            st.error("File not found. Please enter a valid file path.")
-
-                        
+                        st.write("Description:", description[i])                        
+                        st.write("click the link to download the file:", files[i])         
             else:
                 st.error("Failed to fetch data from the backend")
 
-            
-            
+                       
     with col2:
         a,b = st.columns([4,6])
         with b:
