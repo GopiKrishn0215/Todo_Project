@@ -1,15 +1,8 @@
 import streamlit as st
 import requests
-import datetime
-from datetime import datetime
-import pandas as pd
 from streamlit_option_menu import option_menu
-from django.core.serializers import serialize
-from django.http import HttpResponse
-from streamlit_modal import Modal
 
-
-st.set_page_config(layout="wide",initial_sidebar_state="expanded",)
+st.set_page_config(layout="wide")
 
 local_host = 'http://localhost:8000/'
 
@@ -92,12 +85,12 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
             
         if selected == "Todo":
             
-            a,b = st.columns([3,7])
+            a,c,b = st.columns([3,0.5,6.5])
             with a:
                 with st.form(key="form",clear_on_submit=True):
                 # if 'session_state' not in st.session_state:
                 #     st.session_state['session_state'] = {'task': ''}
-                    task = st.text_input("Tasks",key='task')#,value=st.session_state['session_state']['task']
+                    task = st.text_input("Tasks",key='task',help="add your task here")#,value=st.session_state['session_state']['task']
                     
                     # if 'session_state' in st.session_state:
                     #         st.session_state['session_state'] = {'task': task}
@@ -106,24 +99,25 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                     
                     add = st.form_submit_button("ADD")    
                 
+            
+                    if task:
+                        if add:
+                            st.session_state['session_state'] = {'task': ''}
+                            url = local_host + "todo/?type=create"
+                            headers = {'Authorization': f'Bearer {token}'}
+                            params={
+                                "userName":UserName,
+                                "task":task,
+                                "discription":"",
+                                "status":"Pending",
+                            }        
+                            response = requests.get(url,headers=headers,params=params)
+                            if response.status_code == 200: 
+                                st.success("added successfully")
+                            else:
+                                st.error("You dont have permission to create the task")
             with b:
-                if task:
-                    if add:
-                        st.session_state['session_state'] = {'task': ''}
-                        url = local_host + "todo/?type=create"
-                        headers = {'Authorization': f'Bearer {token}'}
-                        params={
-                            "userName":UserName,
-                            "task":task,
-                            "discription":"",
-                            "status":"Pending",
-                        }        
-                        response = requests.get(url,headers=headers,params=params)
-                        if response.status_code == 200: 
-                            pass
-                        else:
-                            st.error("You dont have permission to create the task")
-                        
+                         
                 params={
                             "userName":UserName,
                         }     
@@ -133,14 +127,16 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                 response = requests.get(url,headers=headers,params=params)
                 if response.status_code == 200:
                     data = response.json()
-                    task = data['task']  
+                    task = data['task']
+                    if len(task)>0:
+                        st.subheader("Pending Tasks:")     
                     for i in range(len(task)):
                         tasks = st.checkbox(task[i],key=task[i])
                         if tasks:
                             with st.container():
-                                with st.form(key="forms",clear_on_submit=True):
+                                with st.form(key=f"forms{i}",clear_on_submit=True):
                                     description = st.text_area("Description")
-                                    file=st.file_uploader("please choose a file")
+                                    file=st.file_uploader("please choose a file",help="Attach only text files and csv and images")
                                     submit = st.form_submit_button("submit")
                                     if description:
                                         if submit :
@@ -155,10 +151,11 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                                                 files = {
                                                     'file': file
                                                 }
-                                                st.success("Submited successfully")
+                                                
                                                 response = requests.post(url,headers=headers,params=params,files=files)
                                                 if response.status_code == 200:
-                                                    st.success("WOW")
+                                                    st.success("Submited successfully")
+                                                    st.experimental_rerun()
                                                 else:
                                                     st.error("ERROR")     
                 else:
@@ -172,9 +169,7 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
             
             url = local_host + "todo/?type=history"
             headers = {'Authorization': f'Bearer {token}'}
-            response = requests.get(url,headers=headers,params=params)
-            
-                        
+            response = requests.get(url,headers=headers,params=params)    
             if response.status_code == 200:
                 data = response.json()
                 tasks = data['tasks']

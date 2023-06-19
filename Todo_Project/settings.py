@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tasks',
     'rest_framework',
     'rest_framework_simplejwt',
-    'tasks',
 ]
 
 MIDDLEWARE = [
@@ -147,4 +147,3 @@ MEDIA_ROOT = BASE_DIR /"media"
 
 MEDIA_URL = "/media/"
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
