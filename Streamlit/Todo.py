@@ -130,38 +130,41 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                     task = data['task']
                     if len(task)>0:
                         st.subheader("Pending Tasks:")     
+                    count = 0
                     for i in range(len(task)):
-                        tasks = st.checkbox(task[i],key=task[i])
+                        tasks = st.checkbox(task[i],key=task[i])                        
                         if tasks:
-                            with st.container():
-                                with st.form(key=f"forms{i}",clear_on_submit=True):
-                                    description = st.text_area("Description")
-                                    file=st.file_uploader("please choose a file",help="Attach only text files and csv and images")
-                                    submit = st.form_submit_button("submit")
-                                    if description:
-                                        if submit :
-                                                url = local_host + "todo/?type=uploadfile"
-                                                headers = {'Authorization': f'Bearer {token}'}
-                                                params = {
-                                                    "userName":UserName,
-                                                    "description":description,
-                                                    "status":"Completed",
-                                                    "task":task[i],
-                                                }
-                                                files = {
-                                                    'file': file
-                                                }
-                                                
-                                                response = requests.post(url,headers=headers,params=params,files=files)
-                                                if response.status_code == 200:
-                                                    st.success("Submited successfully")
-                                                    st.experimental_rerun()
-                                                else:
-                                                    st.error("ERROR")     
+                            count +=1
+                            if count == 1:
+                                with st.container():
+                                    with st.form(key=f"forms{i}",clear_on_submit=True):
+                                        description = st.text_area("Description")
+                                        file=st.file_uploader("please choose a file",help="Attach only csv files and documents")
+                                        submit = st.form_submit_button("submit")
+                                        if description:
+                                            if submit :
+                                                    url = local_host + "todo/?type=uploadfile"
+                                                    headers = {'Authorization': f'Bearer {token}'}
+                                                    params = {
+                                                        "userName":UserName,
+                                                        "description":description,
+                                                        "status":"Completed",
+                                                        "task":task[i],
+                                                    }
+                                                    files = {
+                                                        'file': file
+                                                    }
+                                                    
+                                                    response = requests.post(url,headers=headers,params=params,files=files)
+                                                    if response.status_code == 200:
+                                                        st.success("Submited successfully")
+                                                        st.experimental_rerun()
+                                                    else:
+                                                        st.error("ERROR")
+                                break      
                 else:
                     st.error(f'Error: {response.status_code}')
                     
-                              
         if selected == "History":
             params={
                     "userName":UserName,
