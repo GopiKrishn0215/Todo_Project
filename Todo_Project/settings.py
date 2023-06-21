@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-8kyz)i0y6)4lw3m0l7wacl24^(&+#3+=mq16t4*x&^3njj-uz=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tasks',
     'rest_framework',
     'rest_framework_simplejwt',
-    'tasks',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'todo_list.urls'
+ROOT_URLCONF = 'Todo_Project.urls'
 
 TEMPLATES = [
     {
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'todo_list.wsgi.application'
+WSGI_APPLICATION = 'Todo_Project.wsgi.application'
 
 
 # Database
@@ -147,4 +147,9 @@ MEDIA_ROOT = BASE_DIR /"media"
 
 MEDIA_URL = "/media/"
 
+# Set the session engine
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+
+
+
