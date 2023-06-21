@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from streamlit_option_menu import option_menu
 
+
 st.set_page_config(layout="wide")
 
 local_host = 'http://localhost:8000/'
@@ -34,6 +35,15 @@ def get_data(token):
         return token
     else:
         return None
+
+def get_user_id():
+    url = local_host + 'getid/'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        response = data['response']
+        return response
+
 
 
 if 'logged_in' not in st.session_state or not st.session_state['logged_in']:
@@ -87,35 +97,56 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
             
             a,c,b = st.columns([3,0.5,6.5])
             with a:
-                with st.form(key="form",clear_on_submit=True):
-                # if 'session_state' not in st.session_state:
-                #     st.session_state['session_state'] = {'task': ''}
-                    task = st.text_input("Tasks",key='task',help="add your task here")#,value=st.session_state['session_state']['task']
-                    
-                    # if 'session_state' in st.session_state:
-                    #         st.session_state['session_state'] = {'task': task}
-                    # else:
-                    #     st.session_state['session_state'] = {'task': ''}
-                    
-                    add = st.form_submit_button("ADD")    
+                # #with st.form(key="form",clear_on_submit=True):
+                # url = local_host + "fetch/"
+                # # headers = {'Authorization': f'Bearer {token}'}      
+                # response = requests.get(url)
+                # st.write(response)
+                # saved_data = None
+                # if response.status_code == 200: 
+                #     data = response.json()
+                #     saved_data = data['saved_data']
+                #     st.write(saved_data)
+                # if saved_data == None:
+                #     saved_data=""
                 
-            
-                    if task:
-                        if add:
-                            st.session_state['session_state'] = {'task': ''}
-                            url = local_host + "todo/?type=create"
-                            headers = {'Authorization': f'Bearer {token}'}
-                            params={
-                                "userName":UserName,
-                                "task":task,
-                                "discription":"",
-                                "status":"Pending",
-                            }        
-                            response = requests.get(url,headers=headers,params=params)
-                            if response.status_code == 200: 
-                                st.success("added successfully")
-                            else:
-                                st.error("You dont have permission to create the task")
+                saved_data = ""
+                if 'task_back' in st.session_state:
+                    saved_data = st.session_state['task_back']
+                task = st.text_input("Tasks",key='task',help="add your task here",value=saved_data)
+                if 'task' not in  st.session_state:
+                    st.write("add session ")
+                    st.session_state['task'] = task
+                
+                add = st.button("ADD")
+                    
+                if task:
+                    url = local_host + "save/"
+                    # headers = {'Authorization': f'Bearer {token}'}      
+                    response = requests.post(url,params={"user_input":task})
+                    if response.status_code == 200: 
+                        data = response.json()
+                        aa = data['input']
+                        # st.write(aa)
+                    
+                    if add:
+                        url = local_host + "todo/?type=create"
+                        headers = {'Authorization': f'Bearer {token}'}
+                        params={
+                            "userName":UserName,
+                            "task":task,
+                            "discription":"",
+                            "status":"Pending",
+                        }        
+                        response = requests.post(url,headers=headers,params=params)
+                        if response.status_code == 200: 
+                            st.success("added successfully")
+                            del st.session_state['task']
+                            del st.session_state['task_back']
+                            st.experimental_rerun()
+                            
+                        else:
+                            st.error("You dont have permission to create the task")
             with b:
                          
                 params={
@@ -137,71 +168,90 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                             count +=1
                             if count == 1:
                                 with st.container():
-                                    with st.form(key=f"forms{i}",clear_on_submit=True):
-                                        description = st.text_area("Description")
-                                        file=st.file_uploader("please choose a file",help="Attach only csv files and documents")
-                                        submit = st.form_submit_button("submit")
-                                        if description:
-                                            if submit :
-                                                    url = local_host + "todo/?type=uploadfile"
-                                                    headers = {'Authorization': f'Bearer {token}'}
-                                                    params = {
-                                                        "userName":UserName,
-                                                        "description":description,
-                                                        "status":"Completed",
-                                                        "task":task[i],
-                                                    }
-                                                    files = {
-                                                        'file': file
-                                                    }
-                                                    
-                                                    response = requests.post(url,headers=headers,params=params,files=files)
-                                                    if response.status_code == 200:
-                                                        st.success("Submited successfully")
-                                                        st.experimental_rerun()
-                                                    else:
-                                                        st.error("ERROR")
+                                    # with st.form(key=f"forms{i}",clear_on_submit=True):
+                                    description = st.text_area("Description")
+                                    file=st.file_uploader("please choose a file",help="Attach only csv files and documents")
+                                    # st.write(description)
+                                    submit = st.button("submit")
+                                    if submit :
+                                        if description == "" and file != None:
+                                            st.error("Please fill description")
+                                        elif file == None and description!="":
+                                            st.error("PLease upload file")
+                                        elif description and file:
+                                            url = local_host + "todo/?type=uploadfile"
+                                            headers = {'Authorization': f'Bearer {token}'}
+                                            params = {
+                                                "userName":UserName,
+                                                "description":description,
+                                                "status":"Completed",
+                                                "task":task[i],
+                                            }
+                                            files = {
+                                                'file': file
+                                            }
+                                            
+                                            response = requests.post(url,headers=headers,params=params,files=files)
+                                            if response.status_code == 200:
+                                                st.success("Submited successfully")
+                                                st.experimental_rerun()
+                                            else:
+                                                st.error("ERROR")
+                                        else:
+                                            st.error("Fill all fields")
+                                                     
                                 break      
                 else:
                     st.error(f'Error: {response.status_code}')
                     
         if selected == "History":
+            todo_task = st.session_state['task']
+            st.session_state['task_back'] = todo_task
             params={
                     "userName":UserName,
+                    "status":"Completed"
                 }     
             
             url = local_host + "todo/?type=history"
             headers = {'Authorization': f'Bearer {token}'}
-            response = requests.get(url,headers=headers,params=params)    
+            response = requests.get(url,headers=headers,params=params)
+            a,b = st.columns([6,4])    
             if response.status_code == 200:
                 data = response.json()
                 tasks = data['tasks']
                 files = data['files']
                 description = data['description']
-                st.header("Completed Tasks")
-                for i in range(len(tasks)):
-                    details = st.button(f'{i+1}.{tasks[i]}')
-                    # Apply CSS styles to hide the button structure
-                    button_style = """
-                        <style>
-                        .stButton>button {
-                            background: none;
-                            border: none;
-                            padding: 0;
-                            margin: 0;
-                            font-size: inherit;
-                            font-family: inherit;
-                            cursor: pointer;
-                            outline: inherit;
-                        }
-                        </style>
-                    """
+                
+                with a:
+                    count1=0
+                    for i in range(len(tasks)):
+                        if count1==0:
+                            st.header("Completed Tasks")
+                        details = st.button(f'{i+1}.{tasks[i]}')
+                        count1+=1
+                        # Apply CSS styles to hide the button structure
+                        button_style = """
+                            <style>
+                            .stButton>button {
+                                background: none;
+                                border: none;
+                                padding: 0;
+                                margin: 0;
+                                font-size: inherit;
+                                font-family: inherit;
+                                cursor: pointer;
+                                outline: inherit;
+                            }
+                            </style>
+                        """
 
-                    # Display the CSS styles
-                    st.markdown(button_style, unsafe_allow_html=True)
-                    if details:
-                        st.write("Description:", description[i])                        
-                        st.write("click the link to download the file:", files[i])         
+                        st.markdown(button_style, unsafe_allow_html=True)
+                        
+                        if details:
+                            with b:
+                                st.subheader("Description:")
+                                st.write(description[i])                        
+                            st.write(files[i])      
             else:
                 st.error("Failed to fetch data from the backend")
 
