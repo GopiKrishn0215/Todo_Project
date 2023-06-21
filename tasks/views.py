@@ -12,11 +12,6 @@ from django.contrib.sessions.models import Session
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_exempt
 
-def get_csrf_token(request):
-    # Generate and return the CSRF token
-    csrf_token = get_token(request)
-    return JsonResponse({"csrf_token": csrf_token})
-
 
 # Create your views here.
 def index(request):
@@ -90,7 +85,7 @@ def fetch_saved_data_from_session(request):
     if request.method == "GET":
         print("checking if the call is being made")
         try:
-            saved_data = request.session.get('saved_data')
+            saved_data = request.session['user_input']['input']
             print(saved_data,"###############################################")
             response = {"saved_data":saved_data}
             return JsonResponse(response)
@@ -104,11 +99,24 @@ def save_data_in_session(request):
         user_input = request.GET.get('user_input')
         # print(user_input)
         # Store user input in session
-        request.session['user_input'] = user_input
+        request.session['input'] = user_input
+        request.session.modified = True
         
         if (request.session['user_input']):
             print("*"*10, user_input,"*"*10)
         return JsonResponse({"input":user_input})
+    
+    if request.method == "GET":
+        print("checking if the call is being made")
+        try:
+            saved_data = request.session['input']
+            print(saved_data,"###############################################")
+            response = {"saved_data":saved_data}
+            return JsonResponse(response)
+        except:
+            print("exception occured")
+            return JsonResponse({"saved_data":""})
+
     
 
 def get_user_id(request):

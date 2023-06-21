@@ -5,7 +5,7 @@ from streamlit_option_menu import option_menu
 
 st.set_page_config(layout="wide")
 
-local_host = 'http://localhost:8000/'
+local_host = 'http://192.168.70.4:8002/'
 
 session_state = st.session_state
 
@@ -98,17 +98,18 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
             a,c,b = st.columns([3,0.5,6.5])
             with a:
                 # #with st.form(key="form",clear_on_submit=True):
-                # url = local_host + "fetch/"
+                url = local_host + "save/"
                 # # headers = {'Authorization': f'Bearer {token}'}      
                 # response = requests.get(url)
-                # st.write(response)
-                # saved_data = None
+                # # st.write(response)
+                # # saved_data = None
                 # if response.status_code == 200: 
+                #     # st.write(response.status_code)
                 #     data = response.json()
                 #     saved_data = data['saved_data']
                 #     st.write(saved_data)
-                # if saved_data == None:
-                #     saved_data=""
+                #     if saved_data == None:
+                #         saved_data=""
                 
                 saved_data = ""
                 if 'task_back' in st.session_state:
@@ -260,7 +261,7 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
         a,b = st.columns([4,6])
         with b:
             image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1bXeus9y2Wsba6hsXUYIToDMEMM5Dx19wDxLDjB7Puw&s"
-            st.image(image, caption=UserName, width=160)
+            st.image(image, caption=UserName, width=180)
         
 
 
