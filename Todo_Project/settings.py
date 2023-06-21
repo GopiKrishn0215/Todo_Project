@@ -148,8 +148,8 @@ MEDIA_ROOT = BASE_DIR /"media"
 MEDIA_URL = "/media/"
 
 # Set the session engine
-# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-# # Enable or disable secure session cookies
-# SESSION_COOKIE_SECURE = False
+# Enable or disable secure session cookies
+SESSION_COOKIE_SECURE = False
 
