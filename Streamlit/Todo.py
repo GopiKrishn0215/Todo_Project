@@ -259,7 +259,7 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
     with col2:
         a,b = st.columns([4,6])
         with b:
-            image = "/home/gopikrishna/Todo/Todo_Env/Todo_Project/images/profile_photo.jpg"
+            image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1bXeus9y2Wsba6hsXUYIToDMEMM5Dx19wDxLDjB7Puw&s"
             st.image(image, caption=UserName, width=160)
         
 
