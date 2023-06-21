@@ -97,8 +97,8 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
             
             a,c,b = st.columns([3,0.5,6.5])
             with a:
-                # #with st.form(key="form",clear_on_submit=True):
-                url = local_host + "save/"
+                with st.form(key="form",clear_on_submit=True):
+                # url = local_host + "save/"
                 # # headers = {'Authorization': f'Bearer {token}'}      
                 # response = requests.get(url)
                 # # st.write(response)
@@ -111,23 +111,23 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                 #     if saved_data == None:
                 #         saved_data=""
                 
-                saved_data = ""
-                if 'task_back' in st.session_state:
-                    saved_data = st.session_state['task_back']
-                task = st.text_input("Tasks",key='task',help="add your task here",value=saved_data)
-                if 'task' not in  st.session_state:
-                    st.write("add session ")
-                    st.session_state['task'] = task
+                # saved_data = ""
+                # if 'task_back' in st.session_state:
+                #     saved_data = st.session_state['task_back']
+                    task = st.text_input("Tasks",key='task',help="add your task here")
+                # if 'task' not in  st.session_state:
+                #     st.write("add session ")
+                #     st.session_state['task'] = task
                 
-                add = st.button("ADD")
+                    add = st.form_submit_button("ADD")
                     
                 if task:
-                    url = local_host + "save/"
-                    # headers = {'Authorization': f'Bearer {token}'}      
-                    response = requests.post(url,params={"user_input":task})
-                    if response.status_code == 200: 
-                        data = response.json()
-                        aa = data['input']
+                    # url = local_host + "save/"
+                    # # headers = {'Authorization': f'Bearer {token}'}      
+                    # response = requests.post(url,params={"user_input":task})
+                    # if response.status_code == 200: 
+                    #     data = response.json()
+                    #     aa = data['input']
                         # st.write(aa)
                     
                     if add:
@@ -142,8 +142,8 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                         response = requests.post(url,headers=headers,params=params)
                         if response.status_code == 200: 
                             st.success("added successfully")
-                            del st.session_state['task']
-                            del st.session_state['task_back']
+                            # del st.session_state['task']
+                            # del st.session_state['task_back']
                             st.experimental_rerun()
                             
                         else:
@@ -206,8 +206,8 @@ if 'logged_in' in st.session_state and st.session_state['logged_in']:
                     st.error(f'Error: {response.status_code}')
                     
         if selected == "History":
-            todo_task = st.session_state['task']
-            st.session_state['task_back'] = todo_task
+            # todo_task = st.session_state['task']
+            # st.session_state['task_back'] = todo_task
             params={
                     "userName":UserName,
                     "status":"Completed"
