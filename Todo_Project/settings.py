@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-8kyz)i0y6)4lw3m0l7wacl24^(&+#3+=mq16t4*x&^3njj-uz=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','192.168.70.4']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -151,8 +151,5 @@ MEDIA_URL = "/media/"
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # Enable or disable secure session cookies
-SESSION_COOKIE_SECURE = True
-
-SESSION_SAVE_EVERY_REQUEST = True
-
+SESSION_COOKIE_SECURE = False
 
