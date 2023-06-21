@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tasks',
     'rest_framework',
     'rest_framework_simplejwt',
+    'tasks',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'Todo_Project.urls'
+ROOT_URLCONF = 'todo_list.urls'
 
 TEMPLATES = [
     {
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Todo_Project.wsgi.application'
+WSGI_APPLICATION = 'todo_list.wsgi.application'
 
 
 # Database
@@ -147,8 +147,4 @@ MEDIA_ROOT = BASE_DIR /"media"
 
 MEDIA_URL = "/media/"
 
-# Set the session engine
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-
-
-
